@@ -39,6 +39,7 @@ button {
   padding: 0.6em 1.2em;
   cursor: pointer;
   border: none;
+  margin: 7px;
 
   font-size: 1em;
   font-weight: 600;
@@ -57,7 +58,7 @@ button:focus-visible {
 }
 
 .sign-button {
-  width: 212px;
+  width: 208px;
   height: 100px;
   border-radius: 16px;
 }
@@ -65,11 +66,11 @@ button:focus-visible {
 .buttons {
   display: flex;
   flex-wrap: wrap;
-  gap: 14px;
 }
 
 .today-info,
-.sign-picker {
+.sign-picker,
+.welcome {
   border: 1px solid white;
   border-radius: 16px;
   background-color: #150d21;

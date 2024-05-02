@@ -22,7 +22,26 @@ const Divider = ({ signsData }) => {
   );
 };
 
+const SignInfo = ({ selectedSign, closeSignInfo }) => {
+  return (
+    <>
+      <h2>{selectedSign.signName}</h2>
+      <img src={selectedSign.img} />
+      <div className="sign-info">
+        <p>
+          {selectedSign.startDate} — {selectedSign.endDate}
+        </p>
+        <p>Lucky numbers: {selectedSign.luckyNumbers.toString()}</p>
+        <p>Key traits: {selectedSign.traits}</p>
+        <p>Today's Horoscope: {selectedSign.dailyHoroscope}</p>
+      </div>
+      <button onClick={closeSignInfo}>Choose another sign</button>
+    </>
+  );
+};
+
 function App() {
+  const [showStart, setShowStart] = useState(true);
   const [selectedSign, setSelectedSign] = useState(null);
 
   // get the astrology sign data object
@@ -40,16 +59,6 @@ function App() {
     return zodiacSign;
   }
 
-  const formatDate = (date) => {
-    const options = {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      weekday: "long",
-    };
-    return date.toLocaleDateString("en-US", options);
-  };
-
   // get today's date and format it nicely
   const currentDate = new Date();
   const currentSign = findSign(currentDate);
@@ -64,54 +73,67 @@ function App() {
   return (
     <>
       <h1>Horoscopes</h1>
-      <div className="today-info">
-        <h2>About Today</h2>
-        <p>The current date is {formatDate(currentDate)}</p>
-        <p>We are currently in {currentSignName} season</p>
-        <p>
-          {nextSignName} season starts on {formatDate(nextSignStartDate)}
-        </p>
-      </div>
-      <Divider signsData={signsData} />
-      <div className="sign-picker">
-        {selectedSign ? (
-          <div>
-            <h2>{selectedSign.signName}</h2>
-            <img src={selectedSign.img} />
-            <div className="sign-info">
-              <p>
-                {selectedSign.startDate} — {selectedSign.endDate}
-              </p>
-              <p>Lucky numbers: {selectedSign.luckyNumbers.toString()}</p>
-              <p>Key traits: {selectedSign.traits}</p>
-              <p>Today's Horoscope: {selectedSign.dailyHoroscope}</p>
-            </div>
-            <button
-              onClick={() => {
-                setSelectedSign(null);
-              }}
-            >
-              Choose another sign
-            </button>
-          </div>
-        ) : (
-          <div className="sign-buttons">
-            <h2>Zodiac Signs</h2>
-            <p>Choose a sign to read its daily horoscope</p>
-            <div className="buttons">
-              {signsData.map((sign) => (
-                <SignButton
-                  key={sign.key}
-                  name={sign.signName}
-                  showSign={() => setSelectedSign(sign)}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
+      {showStart ? (
+        <>
+          <section className="welcome">
+            <p>Welcome.</p>
+            <p>
+              Click enter to learn more about the twelve zodiac signs and their
+              daily horoscopes.
+            </p>
+            <button onClick={() => setShowStart(false)}>Enter</button>
+          </section>
+          <Divider signsData={signsData} />
+        </>
+      ) : (
+        <>
+          <section className="today-info">
+            <h2>About Today</h2>
+            <p>Today is {formatDate(currentDate)}</p>
+            <p>We are currently in {currentSignName} season</p>
+            <p>
+              {nextSignName} season starts on {formatDate(nextSignStartDate)}
+            </p>
+          </section>
+          <Divider signsData={signsData} />
+          <section className="sign-picker">
+            {selectedSign ? (
+              <SignInfo
+                selectedSign={selectedSign}
+                closeSignInfo={() => {
+                  setSelectedSign(null);
+                }}
+              />
+            ) : (
+              <div className="sign-buttons">
+                <h2>Zodiac Signs</h2>
+                <p>Choose a sign to read its daily horoscope</p>
+                <div className="buttons">
+                  {signsData.map((sign) => (
+                    <SignButton
+                      key={sign.key}
+                      name={sign.signName}
+                      showSign={() => setSelectedSign(sign)}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+          </section>
+        </>
+      )}
     </>
   );
 }
 
 export default App;
+
+const formatDate = (date) => {
+  const options = {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    weekday: "long",
+  };
+  return date.toLocaleDateString("en-US", options);
+};
