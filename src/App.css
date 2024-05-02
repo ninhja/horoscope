@@ -1,11 +1,8 @@
 #root {
-  max-width: 800px;
-  margin: 0 auto;
+  max-width: 840px;
+  margin: 0 auto 80px;
   padding: 0.1em;
   text-align: center;
-
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -14,6 +11,9 @@
 }
 
 body {
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #271632;
+
   margin: 0;
   font-family: "Baskerville", serif;
   font-size: 24px;
@@ -29,6 +29,7 @@ h1 {
 }
 
 h2 {
+  font-style: italic;
   text-decoration: underline 1px;
   text-underline-offset: 4px;
 }
@@ -37,59 +38,53 @@ button {
   border-radius: 8px;
   padding: 0.6em 1.2em;
   cursor: pointer;
+  border: none;
 
   font-size: 1em;
   font-weight: 600;
   font-family: inherit;
 
   background-color: #f9f9f9;
-  transition: background-color 0.25s;
+  transition: all 0.25s;
 }
 button:hover {
-  background-color: #b797ee;
+  background-color: #aa82d1;
 }
 button:focus,
 button:focus-visible {
   color: #ffffff;
   background-color: #533392;
-  border: none;
 }
 
 .sign-button {
-  width: 220px;
+  width: 212px;
   height: 100px;
   border-radius: 16px;
 }
 
 .buttons {
   display: flex;
-  gap: 14px;
   flex-wrap: wrap;
+  gap: 14px;
 }
 
 .today-info,
 .sign-picker {
   border: 1px solid white;
   border-radius: 16px;
+  background-color: #150d21;
 
   margin: 24px;
-  padding: 24px;
-}
-
-svg {
-  fill: white;
-}
-
-.sign-picker {
-  position: relative;
+  padding: 0px 60px 32px;
 }
 
 img {
   -webkit-filter: invert(100%); /* Safari/Chrome */
   filter: invert(100%);
   width: 100px;
-  /* position: absolute;
-  top: 32px;
-  left: 20px;
-  margin-left: 20px; */
+}
+
+.divider img {
+  width: 20px;
+  margin: 0px 20px;
 }

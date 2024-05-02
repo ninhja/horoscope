@@ -17,4 +17,5 @@ Currently, two official plugins are available:
 1. Now we want to be able to click on all of these SignButtons to display more information below about that sign. First, let's make those buttons work.
 1. We need to create a function that gets triggered when the user clicks the button.
 1. Let's create a SignInfo component. It should take in a signData object as a prop. In its JSX, it should display the signName as an h2 and a div. Inside that div, it should show the startDate and endDate, its luckyNumbers, and the daily horoscope for that sign.
+1. Use conditional rendering with a ternary statement to make the sign picker and sign info sections occupy the same place. If selectedSign has a value, show the sign info, but if it's null, show the sign picker.
 1. Use NASA API to display the astronomy picture of the day
