@@ -5,24 +5,9 @@ import { useState } from "react";
 const SignButton = ({ name, showSign }) => {
   return (
     <>
-      <button className="sign-card" onClick={showSign}>
+      <button className="sign-button" onClick={showSign}>
         {name}
       </button>
-    </>
-  );
-};
-
-const SignInfo = ({ signData }) => {
-  return (
-    <>
-      <h2>{signData.signName}</h2>
-      <div>
-        <p>
-          {signData.startDate} — {signData.endDate}
-        </p>
-        <p>Lucky numbers: {signData.luckyNumbers.toString()}</p>
-        <p>Today's Horoscope: {signData.dailyHoroscope}</p>
-      </div>
     </>
   );
 };
@@ -55,27 +40,49 @@ function App() {
 
   return (
     <>
+      <h1>Horoscopes</h1>
       <div className="today-info">
-        <p>Today's date is {formattedDate}</p>
-        <p>The current Zodiac Sign is {currentSign}</p>
+        <h2>About Today</h2>
+        <p>The current date is {formattedDate}</p>
+        <p>We are currently in {currentSign} season</p>
       </div>
       <div className="sign-picker">
-        <p>Choose a sign to learn more</p>
-        <div className="cards">
-          {signsData.map((sign) => (
-            <SignButton
-              key={sign.key}
-              name={sign.signName}
-              showSign={() => setSelectedSign(sign)}
-            />
-          ))}
-        </div>
+        {selectedSign ? (
+          <div>
+            <h2>{selectedSign.signName}</h2>
+            <img src={selectedSign.img} />
+            <div className="sign-info">
+              <p>
+                {selectedSign.startDate} — {selectedSign.endDate}
+              </p>
+              <p>Lucky numbers: {selectedSign.luckyNumbers.toString()}</p>
+              <p>Key traits: {selectedSign.traits}</p>
+              <p>Today's Horoscope: {selectedSign.dailyHoroscope}</p>
+            </div>
+            <button
+              onClick={() => {
+                setSelectedSign(null);
+              }}
+            >
+              Choose another sign
+            </button>
+          </div>
+        ) : (
+          <div className="sign-buttons">
+            <h2>Zodiac Signs</h2>
+            <p>Choose a sign to read its daily horoscope</p>
+            <div className="buttons">
+              {signsData.map((sign) => (
+                <SignButton
+                  key={sign.key}
+                  name={sign.signName}
+                  showSign={() => setSelectedSign(sign)}
+                />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
-      {selectedSign && (
-        <div className="selected-sign">
-          <SignInfo signData={selectedSign} />
-        </div>
-      )}
     </>
   );
 }
