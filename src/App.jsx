@@ -22,9 +22,10 @@ const Divider = ({ signsData }) => {
   );
 };
 
-const SignInfo = ({ selectedSign, closeSignInfo }) => {
+const SignInfo = ({ selectedSign, closeSignInfo, introText }) => {
   return (
     <>
+      <p>{introText}</p>
       <h2>{selectedSign.signName}</h2>
       <img src={selectedSign.img} />
       <div className="sign-info">
@@ -57,8 +58,12 @@ function App() {
         sign.startDate + " " + currentDate.getFullYear()
       );
       const endDate = new Date(sign.endDate + " " + currentDate.getFullYear());
+      console.log("date", date);
+      console.log("startDate", startDate);
+      console.log("endDate", endDate);
       return date >= startDate && date <= endDate;
     });
+    console.log(zodiacSign, date);
     return zodiacSign;
   }
 
@@ -82,10 +87,9 @@ function App() {
   const handleSubmit = (e) => {
     e.preventDefault();
     let userDate = new Date(formData.birthDate);
-    console.log(userDate, "userDate");
+    console.log("userDate", userDate);
     let sign = findSign(userDate);
     setPersonalSign(sign);
-    console.log(sign, "sign");
     // You can perform additional actions with the form data here
     console.log("Form submitted:", formData, sign);
   };
@@ -119,15 +123,13 @@ function App() {
           <Divider signsData={signsData} />
           <section className="form-wrapper">
             {personalSign ? (
-              <>
-                <p>Your sign is...</p>
-                <SignInfo
-                  selectedSign={personalSign}
-                  closeSignInfo={() => {
-                    setPersonalSign(null);
-                  }}
-                />
-              </>
+              <SignInfo
+                selectedSign={personalSign}
+                closeSignInfo={() => {
+                  setPersonalSign(null);
+                }}
+                introText={"Your sign is..."}
+              />
             ) : (
               <>
                 <h2>What's Your Sign?</h2>
@@ -140,17 +142,6 @@ function App() {
                     onChange={handleInputChange}
                   ></input>
                   <button type="submit">Submit</button>
-                  {personalSign ? (
-                    <>
-                      <p>Your sign is...</p>
-                      <SignInfo
-                        selectedSign={personalSign}
-                        closeSignInfo={() => {
-                          setPersonalSign(null);
-                        }}
-                      />
-                    </>
-                  ) : null}
                 </form>
               </>
             )}
@@ -163,6 +154,7 @@ function App() {
                 closeSignInfo={() => {
                   setSelectedSign(null);
                 }}
+                introText={"You've chosen..."}
               />
             ) : (
               <div className="sign-buttons">
