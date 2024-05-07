@@ -1,15 +1,35 @@
 import "./App.css";
 import horoscopeData from "./data/Data";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-const SignButton = ({ name, showSign }) => {
-  return (
-    <>
-      <button className="sign-button" onClick={showSign}>
-        {name}
-      </button>
-    </>
-  );
+const Fetch = (sign) => {
+  const [horoscopeData, setHoroscopeData] = useState(null);
+
+  // console.log(sign, sign.sign.signName);
+
+  useEffect(() => {
+    const url = `https://horoscope19.p.rapidapi.com/get-horoscope/daily?sign=${
+      sign.sign.signName
+    }&day=${"today"}`;
+    const options = {
+      method: "GET",
+      headers: {
+        "X-RapidAPI-Key": "51ef241501mshb5ecea6765e17a1p1daa6djsn6134398b786d",
+        "X-RapidAPI-Host": "horoscope19.p.rapidapi.com",
+      },
+    };
+
+    fetch(url, options)
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        // console.log(data);
+        setHoroscopeData(data);
+      });
+  }, []);
+
+  return <>{horoscopeData && horoscopeData.data.horoscope_data}</>;
 };
 
 const Divider = ({ signsData }) => {
@@ -22,22 +42,22 @@ const Divider = ({ signsData }) => {
   );
 };
 
-const SignInfo = ({ selectedSign, closeSignInfo, introText }) => {
+const SignInfo = ({ sign, closeSignInfo, introText }) => {
   return (
-    <>
+    <div className="sign-info">
       <p>{introText}</p>
-      <h2>{selectedSign.signName}</h2>
-      <img src={selectedSign.img} />
-      <div className="sign-info">
+      <h2>{sign.signName}</h2>
+      <img src={sign.img} alt={`${sign.signName} zodiac sign symbol`} />
+      <div>
         <p>
-          {selectedSign.startDate} — {selectedSign.endDate}
+          {sign.startDate} — {sign.endDate}
         </p>
-        <p>Lucky numbers: {selectedSign.luckyNumbers.toString()}</p>
-        <p>Key traits: {selectedSign.traits}</p>
-        <p>Today's Horoscope: {selectedSign.dailyHoroscope}</p>
+        <p>Lucky numbers: {sign.luckyNumbers.toString()}</p>
+        <p>Key traits: {sign.traits}</p>
+        <p>Today's Horoscope: {sign.dailyHoroscope}</p>
       </div>
       <button onClick={closeSignInfo}>Go back</button>
-    </>
+    </div>
   );
 };
 
@@ -54,16 +74,10 @@ function App() {
   // get the zodiac sign data based on a given date
   function findSign(date) {
     const zodiacSign = signsData.find((sign) => {
-      const startDate = new Date(
-        sign.startDate + " " + currentDate.getFullYear()
-      );
-      const endDate = new Date(sign.endDate + " " + currentDate.getFullYear());
-      console.log("date", date);
-      console.log("startDate", startDate);
-      console.log("endDate", endDate);
+      const startDate = new Date(sign.startDate + " " + date.getFullYear());
+      const endDate = new Date(sign.endDate + " " + date.getFullYear());
       return date >= startDate && date <= endDate;
     });
-    console.log(zodiacSign, date);
     return zodiacSign;
   }
 
@@ -86,12 +100,15 @@ function App() {
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!formData.birthDate) {
+      alert("Invalid date. Please input a valid birthday.");
+      return;
+    }
     let userDate = new Date(formData.birthDate);
-    console.log("userDate", userDate);
     let sign = findSign(userDate);
+    console.log(userDate, sign);
     setPersonalSign(sign);
-    // You can perform additional actions with the form data here
-    console.log("Form submitted:", formData, sign);
+    setFormData({ birthDate: "" });
   };
 
   return (
@@ -124,7 +141,7 @@ function App() {
           <section className="form-wrapper">
             {personalSign ? (
               <SignInfo
-                selectedSign={personalSign}
+                sign={personalSign}
                 closeSignInfo={() => {
                   setPersonalSign(null);
                 }}
@@ -150,7 +167,7 @@ function App() {
           <section className="sign-picker">
             {selectedSign ? (
               <SignInfo
-                selectedSign={selectedSign}
+                sign={selectedSign}
                 closeSignInfo={() => {
                   setSelectedSign(null);
                 }}
@@ -162,16 +179,20 @@ function App() {
                 <p>Choose a sign to read its daily horoscope</p>
                 <div className="buttons">
                   {signsData.map((sign) => (
-                    <SignButton
+                    <button
                       key={sign.key}
-                      name={sign.signName}
-                      showSign={() => setSelectedSign(sign)}
-                    />
+                      className="sign-button"
+                      onClick={() => setSelectedSign(sign)}
+                    >
+                      {sign.signName}
+                    </button>
                   ))}
                 </div>
               </div>
             )}
           </section>
+          <Divider signsData={signsData} />
+          <section>{selectedSign && <Fetch sign={selectedSign} />}</section>
         </>
       )}
     </>

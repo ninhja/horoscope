@@ -1,15 +1,3 @@
-#root {
-  max-width: 755px;
-  margin: 0 auto 80px;
-  padding: 0.1em;
-  text-align: center;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
 body {
   color: rgba(255, 255, 255, 0.87);
   background-color: #271632;
@@ -19,6 +7,18 @@ body {
   font-size: 18px;
   line-height: 1.5;
   font-weight: 600;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  max-width: 755px;
+  margin: 0 auto 80px;
+  padding: 0.1em;
+  text-align: center;
 }
 
 h1 {
@@ -52,22 +52,12 @@ button {
 button:hover {
   background-color: #aa82d1;
 }
-button:focus,
-button:focus-visible {
-  color: #ffffff;
-  background-color: #533392;
-}
 
 .sign-button {
   width: 180px;
   height: 90px;
   margin: 7px;
   border-radius: 16px;
-}
-
-.buttons {
-  display: flex;
-  flex-wrap: wrap;
 }
 
 section {
@@ -93,7 +83,7 @@ p {
 
 .divider img {
   width: 20px;
-  margin: 0px 20px;
+  margin: 5px 20px;
 }
 
 .astroPic {
