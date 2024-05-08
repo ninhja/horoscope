@@ -2,33 +2,6 @@ import "./App.css";
 import horoscopeData from "./data/Data";
 import { useState, useEffect } from "react";
 
-const Fetch = (sign) => {
-  const [horoscopeData, setHoroscopeData] = useState(null);
-
-  useEffect(() => {
-    const url = `https://horoscope19.p.rapidapi.com/get-horoscope/daily?sign=${
-      sign.sign.signName
-    }&day=${"today"}`;
-    const options = {
-      method: "GET",
-      headers: {
-        "X-RapidAPI-Key": "51ef241501mshb5ecea6765e17a1p1daa6djsn6134398b786d",
-        "X-RapidAPI-Host": "horoscope19.p.rapidapi.com",
-      },
-    };
-
-    fetch(url, options)
-      .then((res) => {
-        return res.json();
-      })
-      .then((data) => {
-        setHoroscopeData(data);
-      });
-  }, []);
-
-  return <>{horoscopeData && horoscopeData.data.horoscope_data}</>;
-};
-
 const Divider = ({ signsData }) => {
   return (
     <div className="divider">
@@ -40,6 +13,43 @@ const Divider = ({ signsData }) => {
 };
 
 const SignInfo = ({ sign, closeSignInfo, introText }) => {
+  const [horoscopeData, setHoroscopeData] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // useEffect allows you to say do a render of this component first so the user can see something then as soon as the render is done, then do something (the something here being an effect). In our case, we want the user to see our UI first then we want to make a request to the API so we can render the daily horoscope.
+
+  // API documentation: https://rapidapi.com/ashutosh.devil7/api/horoscope19/
+
+  useEffect(() => {
+    setIsLoading(true);
+    const url = `https://horoscope19.p.rapidapi.com/get-horoscope/daily?sign=${
+      sign.signName
+    }&day=${"today"}`;
+    const options = {
+      method: "GET",
+      headers: {
+        "X-RapidAPI-Key": "51ef241501mshb5ecea6765e17a1p1daa6djsn6134398b786d",
+        "X-RapidAPI-Host": "horoscope19.p.rapidapi.com",
+      },
+    };
+
+    fetch(url, options)
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+        throw new Error("Something went wrong");
+      })
+      .then((responseJson) => {
+        console.log(responseJson);
+        setHoroscopeData(responseJson);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, [sign]);
+
   return (
     <div className="sign-info">
       <p>{introText}</p>
@@ -51,7 +61,13 @@ const SignInfo = ({ sign, closeSignInfo, introText }) => {
         </p>
         <p>Lucky numbers: {sign.luckyNumbers.toString()}</p>
         <p>Key traits: {sign.traits}</p>
-        <p>Today's Horoscope: {sign.dailyHoroscope}</p>
+        {/* <p>Today's Horoscope: {sign.dailyHoroscope}</p> */}
+        <p>
+          Today's Horoscope:{" "}
+          {isLoading
+            ? "..."
+            : horoscopeData && horoscopeData.data.horoscope_data}
+        </p>
       </div>
       <button onClick={closeSignInfo}>Go back</button>
     </div>
@@ -206,7 +222,6 @@ function App() {
             )}
           </section>
           <Divider signsData={signsData} />
-          <section>{selectedSign && <Fetch sign={selectedSign} />}</section>
         </>
       )}
     </>
