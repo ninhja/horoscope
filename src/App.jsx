@@ -5,8 +5,6 @@ import { useState, useEffect } from "react";
 const Fetch = (sign) => {
   const [horoscopeData, setHoroscopeData] = useState(null);
 
-  // console.log(sign, sign.sign.signName);
-
   useEffect(() => {
     const url = `https://horoscope19.p.rapidapi.com/get-horoscope/daily?sign=${
       sign.sign.signName
@@ -24,7 +22,6 @@ const Fetch = (sign) => {
         return res.json();
       })
       .then((data) => {
-        // console.log(data);
         setHoroscopeData(data);
       });
   }, []);
@@ -73,9 +70,27 @@ function App() {
 
   // get the zodiac sign data based on a given date
   function findSign(date) {
+    // We have to offset the date in order to prevent an off-by-one error.
+    // The issue is, when we set a date with the Date Picker input,
+    // that date is automatically set in GMT (UTC) timezone.
+    // Then it gets converted to a Date object, and Javascript shifts it
+    // to our local time zone. In my case, that becomes the PST California
+    // time zone. With the timezone offset, the date could now be a day
+    // before or after the date we originally set. So, we need to offset
+    // the date by adding back the amount that the date/time was offset.
+    // https://www.youtube.com/watch?v=oKFb2Us9kmg
+    // https://stackoverflow.com/questions/32469269/javascript-date-give-wrong-date-off-by-one-hour
+    //https://stackoverflow.com/questions/17545708/parse-date-without-timezone-javascript
+    date.setMinutes(date.getMinutes() + date.getTimezoneOffset());
+
     const zodiacSign = signsData.find((sign) => {
       const startDate = new Date(sign.startDate + " " + date.getFullYear());
       const endDate = new Date(sign.endDate + " " + date.getFullYear());
+
+      console.log("FINDING SIGN FOR " + date);
+      console.log("STARTING DATE " + startDate);
+      console.log("ENDING DATE " + endDate);
+      console.log("");
       return date >= startDate && date <= endDate;
     });
     return zodiacSign;
@@ -106,7 +121,6 @@ function App() {
     }
     let userDate = new Date(formData.birthDate);
     let sign = findSign(userDate);
-    console.log(userDate, sign);
     setPersonalSign(sign);
     setFormData({ birthDate: "" });
   };
