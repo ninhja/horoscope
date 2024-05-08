@@ -33,21 +33,32 @@ const SignInfo = ({ sign, closeSignInfo, introText }) => {
       },
     };
 
-    fetch(url, options)
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw new Error("Something went wrong");
-      })
-      .then((responseJson) => {
-        console.log(responseJson);
-        setHoroscopeData(responseJson);
-        setIsLoading(false);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    const fetchDailyHoroscopeData = async () => {
+      const response = await fetch(url, options);
+      const dailyHoroscopeData = await response.json();
+
+      console.log(dailyHoroscopeData);
+      setHoroscopeData(dailyHoroscopeData);
+      setIsLoading(false);
+    };
+
+    fetchDailyHoroscopeData();
+
+    // fetch(url, options)
+    //   .then((response) => {
+    //     if (response.ok) {
+    //       return response.json();
+    //     }
+    //     throw new Error("Something went wrong");
+    //   })
+    //   .then((responseJson) => {
+    //     console.log(responseJson);
+    //     setHoroscopeData(responseJson);
+    //     setIsLoading(false);
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
   }, [sign]);
 
   return (
