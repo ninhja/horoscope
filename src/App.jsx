@@ -16,8 +16,6 @@ const SignInfo = ({ sign, closeSignInfo, introText }) => {
   const [horoscopeData, setHoroscopeData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // useEffect allows you to say do a render of this component first so the user can see something then as soon as the render is done, then do something (the something here being an effect). In our case, we want the user to see our UI first then we want to make a request to the API so we can render the daily horoscope.
-
   // API documentation: https://rapidapi.com/ashutosh.devil7/api/horoscope19/
 
   useEffect(() => {
@@ -35,6 +33,9 @@ const SignInfo = ({ sign, closeSignInfo, introText }) => {
 
     const fetchDailyHoroscopeData = async () => {
       const response = await fetch(url, options);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       const dailyHoroscopeData = await response.json();
 
       console.log(dailyHoroscopeData);
@@ -43,22 +44,6 @@ const SignInfo = ({ sign, closeSignInfo, introText }) => {
     };
 
     fetchDailyHoroscopeData();
-
-    // fetch(url, options)
-    //   .then((response) => {
-    //     if (response.ok) {
-    //       return response.json();
-    //     }
-    //     throw new Error("Something went wrong");
-    //   })
-    //   .then((responseJson) => {
-    //     console.log(responseJson);
-    //     setHoroscopeData(responseJson);
-    //     setIsLoading(false);
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
   }, [sign]);
 
   return (
@@ -86,7 +71,7 @@ const SignInfo = ({ sign, closeSignInfo, introText }) => {
 };
 
 function App() {
-  const [showStart, setShowStart] = useState(true);
+  const [showWelcomePage, setShowWelcomePage] = useState(true);
   const [selectedSign, setSelectedSign] = useState(null);
 
   const [formData, setFormData] = useState({ birthDate: "" });
@@ -97,27 +82,16 @@ function App() {
 
   // get the zodiac sign data based on a given date
   function findSign(date) {
-    // We have to offset the date in order to prevent an off-by-one error.
-    // The issue is, when we set a date with the Date Picker input,
-    // that date is automatically set in GMT (UTC) timezone.
-    // Then it gets converted to a Date object, and Javascript shifts it
-    // to our local time zone. In my case, that becomes the PST California
-    // time zone. With the timezone offset, the date could now be a day
-    // before or after the date we originally set. So, we need to offset
-    // the date by adding back the amount that the date/time was offset.
-    // https://www.youtube.com/watch?v=oKFb2Us9kmg
-    // https://stackoverflow.com/questions/32469269/javascript-date-give-wrong-date-off-by-one-hour
-    //https://stackoverflow.com/questions/17545708/parse-date-without-timezone-javascript
-    date.setMinutes(date.getMinutes() + date.getTimezoneOffset());
+    if (date === null) console.log("Invalid date");
 
     const zodiacSign = signsData.find((sign) => {
-      const startDate = new Date(sign.startDate + " " + date.getFullYear());
-      const endDate = new Date(sign.endDate + " " + date.getFullYear());
+      const startDate = new Date(
+        `${sign.startDate}, ${date.getFullYear()}, 00:00:00`
+      );
+      const endDate = new Date(
+        `${sign.endDate}, ${date.getFullYear()}, 23:59:59`
+      );
 
-      console.log("FINDING SIGN FOR " + date);
-      console.log("STARTING DATE " + startDate);
-      console.log("ENDING DATE " + endDate);
-      console.log("");
       return date >= startDate && date <= endDate;
     });
     return zodiacSign;
@@ -146,9 +120,9 @@ function App() {
       alert("Invalid date. Please input a valid birthday.");
       return;
     }
-    let userDate = new Date(formData.birthDate);
-    let sign = findSign(userDate);
-    setPersonalSign(sign);
+    let userBirthDate = new Date(formData.birthDate);
+    let userSign = findSign(userBirthDate);
+    setPersonalSign(userSign);
     setFormData({ birthDate: "" });
   };
 
@@ -156,7 +130,7 @@ function App() {
     <>
       <h1>Horoscopes</h1>
 
-      {showStart ? (
+      {showWelcomePage ? (
         <>
           <section className="welcome">
             <p>Welcome.</p>
@@ -164,7 +138,7 @@ function App() {
               Click enter to learn about the twelve zodiac signs and their daily
               horoscopes.
             </p>
-            <button onClick={() => setShowStart(false)}>Enter</button>
+            <button onClick={() => setShowWelcomePage(false)}>Enter</button>
           </section>
           <Divider signsData={signsData} />
         </>
